@@ -8,9 +8,9 @@ const path = require('path')
 app.set('views', path.join(__dirname, 'src/views'))
 app.set('view engine', 'ejs')
 
-app.use(express.static(path.join(__dirname,'public')))
-
+app.use(express.static(path.join(__dirname,'public'))) //necessario para pegar o bulma
 app.use(express.json())
+app.use(express.urlencoded({extended: true})) //necessario para pegar as informações do save!!
 
 app.use('/checklist',ChecklistRouter)
 app.use('/',rootRouter)
