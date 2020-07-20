@@ -24,6 +24,16 @@ router.get('/new',async (req,res)=>{
     }
 })
 
+router.get('/:id/edit',async (req,res)=>{
+    try {
+        let checklist = await Checklist.findById(req.params.id)
+        res.status(200).render('checklists/edit', {checklist: checklist})
+    } catch (error) {
+        res.status(500).render('pages/error', {error: "Erro ao editar"})
+        //falta criar a pages error
+    }
+})
+
 router.post('/', async (req,res) =>{
     let { name } = req.body.checklist
     let checklist = new Checklist({name})
@@ -42,19 +52,20 @@ router.get('/:id',async (req,res) => {
         let checklist = await Checklist.findById(req.params.id)
         res.status(200).render('checklists/show', {checklist: checklist})
     } catch (error) {
-        res.status(200).render('pages/error', {error: "Erro ao exibir as tarefas"})
+        res.status(500).render('pages/error', {error: "Erro ao exibir as tarefas"})
         //falta criar a pages error
     }
     
 })
 
 router.put('/:id',async (req,res) => {
-    let {name} = req.body
+    let { name } = req.body.checklist
+    let checklist = await Checklist.findById(req.params.id)
     try {
-        let checklist = await Checklist.findByIdAndUpdate(req.params.id, {name}, {new: true})
-        res.status(200).json(checklist)
+        await Checklist.update({name})
+        res.redirect('/checklist')
     } catch (error) {
-        res.status(422).json(error)
+        res.status(500).render('pages/error', {error: "Erro ao exibir as tarefas"})
         
     }
 })
@@ -62,9 +73,9 @@ router.put('/:id',async (req,res) => {
 router.delete('/:id',async (req,res) => {
     try {
         let checklist = await Checklist.findByIdAndDelete(req.params.id)
-        res.status(200).json(checklist)
+        res.redirect('/checklist')
     } catch (error) {
-        res.status(422).json(error)
+        res.status(500).render('pages/error', {error: "Erro ao deletar as tarefas"})
         
     }
 })
